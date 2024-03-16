@@ -2,38 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Belajar;
+use App\Models\belajar;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 
-class  BelajarController extends Controller
-{
+class BelajarController extends Controller
+{    
     /**
      * index
      *
      * @return View
-     */
+     */ 
     public function index(): View
     {
         //get posts
         $belajars = Belajar::latest()->paginate(5);
 
         //render view with posts
-        return view('belajars.index', compact('belajars'));
+        return view('belajar.index', compact('belajars'));
     }
 
     /**
-     * index
+     * create
      *
      * @return View
      */
     public function create(): View
     {
-        return view('belajars.create');
+        return view('belajar.create');
     }
-
+ 
     /**
      * store
      *
@@ -51,9 +51,9 @@ class  BelajarController extends Controller
 
         //upload image
         $image = $request->file('image');
-        $image->storeAs('public/belajars', $image->hashName());
+        $image->storeAs('public/belajar', $image->hashName());
 
-        //create post
+        //create 
         Belajar::create([
             'image'     => $image->hashName(),
             'title'     => $request->title,
@@ -63,7 +63,7 @@ class  BelajarController extends Controller
         //redirect to index
         return redirect()->route('belajars.index')->with(['success' => 'Data Berhasil Disimpan!']);
     }
-
+    
     /**
      * show
      *
@@ -76,7 +76,7 @@ class  BelajarController extends Controller
         $belajar = Belajar::findOrFail($id);
 
         //render view with post
-        return view('belajars.show', compact('belajar'));
+        return view('belajar.show', compact('belajar'));
     }
 
     /**
@@ -91,9 +91,9 @@ class  BelajarController extends Controller
         $belajar = Belajar::findOrFail($id);
 
         //render view with post
-        return view('belajars.edit', compact('belajar'));
+        return view('belajar.edit', compact('belajar'));
     }
-
+        
     /**
      * update
      *
@@ -121,7 +121,7 @@ class  BelajarController extends Controller
             $image->storeAs('public/belajars', $image->hashName());
 
             //delete old image
-            Storage::delete('public/belajars/' . $belajar->image);
+            Storage::delete('public/belajars/'.$belajar->image);
 
             //update post with new image
             $belajar->update([
@@ -129,6 +129,7 @@ class  BelajarController extends Controller
                 'title'     => $request->title,
                 'content'   => $request->content
             ]);
+
         } else {
 
             //update post without image
@@ -140,5 +141,26 @@ class  BelajarController extends Controller
 
         //redirect to index
         return redirect()->route('belajars.index')->with(['success' => 'Data Berhasil Diubah!']);
+    }
+
+    /**
+     * destroy
+     *
+     * @param  mixed $belajar
+     * @return void
+     */
+    public function destroy($id): RedirectResponse
+    {
+        //get post by ID
+        $belajar = Belajar::findOrFail($id);
+
+        //delete image
+        Storage::delete('public/belajars/'. $belajar->image);
+
+        //delete post
+        $belajar->delete();
+
+        //redirect to index
+        return redirect()->route('belajars.index')->with(['success' => 'Data Berhasil Dihapus!']);
     }
 }
