@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Models\Belajar;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class BelajarController extends Controller
+class  BelajarController extends Controller
 {
     /**
      * index
      *
-     * @return void
+     * @return View
      */
     public function index(): View
     {
@@ -25,13 +25,13 @@ class BelajarController extends Controller
     }
 
     /**
-     * create
+     * index
      *
-     * @return void
+     * @return View
      */
     public function create(): View
     {
-        return view('belajar.create');
+        return view('belajars.create');
     }
 
     /**
@@ -78,6 +78,7 @@ class BelajarController extends Controller
         //render view with post
         return view('belajars.show', compact('belajar'));
     }
+
     /**
      * edit
      *
@@ -120,7 +121,7 @@ class BelajarController extends Controller
             $image->storeAs('public/belajars', $image->hashName());
 
             //delete old image
-            Storage::delete('public/posts/' . $belajar->image);
+            Storage::delete('public/belajars/' . $belajar->image);
 
             //update post with new image
             $belajar->update([
